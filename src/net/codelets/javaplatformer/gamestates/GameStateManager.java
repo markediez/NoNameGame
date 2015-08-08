@@ -1,4 +1,4 @@
-package net.codelets.javaplatformer;
+package net.codelets.javaplatformer.gamestates;
 
 import java.awt.*;
 import java.util.Stack;
@@ -9,9 +9,9 @@ import java.util.Stack;
 public class GameStateManager {
     private Stack<GameState> gameStateStack;
 
-    public GameStateManager(GameState menuState) {
+    public GameStateManager() {
         gameStateStack = new Stack<GameState>();
-        this.push(menuState);
+        gameStateStack.push(new GameStateMenu(this));
     }
 
     public void push(GameState newState) {

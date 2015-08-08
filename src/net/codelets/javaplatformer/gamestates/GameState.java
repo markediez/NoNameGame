@@ -1,4 +1,4 @@
-package net.codelets.javaplatformer;
+package net.codelets.javaplatformer.gamestates;
 
 import java.awt.*;
 
@@ -7,11 +7,14 @@ import java.awt.*;
  */
 public abstract class GameState {
 
-    private GameStateManager gsm;
+    protected GameStateManager gsm;
+    public static double xOffset, yOffset;
 
     public GameState(GameStateManager gsm) {
         this.gsm = gsm;
         this.init();
+        this.xOffset = 0;
+        this.yOffset = 0;
     }
 
     public abstract void init();

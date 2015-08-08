@@ -1,5 +1,8 @@
 package net.codelets.javaplatformer;
 
+import net.codelets.javaplatformer.gamestates.GameStateManager;
+import net.codelets.javaplatformer.gamestates.GameStateMenu;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -16,6 +19,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private boolean isRunning;
     private Thread gameThread;
     private GameStateManager gsm;
+    private int FPS;
+    private long targetTime;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -26,9 +31,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     public void start() {
-        System.out.println("Went in start");
-        gsm = new GameStateManager(new GameStateMenu(gsm));
+        gsm = new GameStateManager();
         isRunning = true;
+        FPS = 60;
+        targetTime = 1000 / FPS;
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -36,16 +42,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void run() {
         long start, wait, elapsed;
-        start = wait = elapsed = 0;
+        gsm.push(new GameStateMenu(gsm));
         while(isRunning) {
             start = System.nanoTime();
             this.update();
             this.repaint();
             elapsed = System.nanoTime() - start;
 
-            // 1000/60 is the target 60 FPS ~ elapsed/1000000 converts elapsed time to milliseconds
-            wait = 1000/60 - elapsed / 1000000;
-            if(wait <= 0) {
+            // targetTime = sec / frames ~ elapsed/1000000 converts elapsed time to milliseconds
+            wait = targetTime - elapsed / 1000000;
+                if(wait <= 0) {
                 wait = 5;
             }
 
@@ -63,6 +69,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.clearRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
         gsm.draw(g);
     }
 

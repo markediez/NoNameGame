@@ -1,6 +1,4 @@
-package net.codelets.javaplatformer;
-
-import javafx.scene.input.KeyCode;
+package net.codelets.javaplatformer.gamestates;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -81,6 +79,7 @@ public class GameStateMenu extends GameState {
     private void run(int selection) {
         switch(selection) {
             case 0:     // START
+                gsm.push(new GameStateLevelZero(gsm));
                 break;
             case 1:     // OPTIONS
                 break;
