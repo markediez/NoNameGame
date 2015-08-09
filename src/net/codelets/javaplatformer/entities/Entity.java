@@ -10,7 +10,7 @@ import java.awt.*;
 public abstract class Entity {
     protected String name;
     protected int health;
-    protected int speed;
+    protected double speed;
     protected double posX;
     protected double posY;
     protected Rectangle collisionBox;
@@ -27,7 +27,7 @@ public abstract class Entity {
 
     public abstract void init();
     public abstract void draw(Graphics g);
-    public abstract void update(Block[] blocks);
+    public abstract void update(Block[][] blocks);
 
     public Rectangle getCollisionBox() { return this.collisionBox; }
 }

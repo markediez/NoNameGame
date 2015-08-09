@@ -10,12 +10,16 @@ import java.awt.*;
  */
 public class Block extends Entity {
     // Properties
-    public static final int BLOCK_SIZE = 32;
+    public static final int BLOCK_SIZE = 48;
     // Constructors
     private Rectangle collisionBox;
-    public Block(int posX, int posY) {
+    private boolean doesExist;
+    private int id;
+
+    public Block(int posX, int posY, int id) {
         super(posX, posY);
-        collisionBox = new Rectangle(posX, posY, BLOCK_SIZE, BLOCK_SIZE);
+        this.collisionBox = new Rectangle(posX, posY, BLOCK_SIZE, BLOCK_SIZE);
+        this.id = id;
     }
 
     // Methods
@@ -25,14 +29,22 @@ public class Block extends Entity {
     }
 
     @Override
-    public void update(Block[] blocks) {
-        this.collisionBox.setLocation((int) posX - (int) GameState.xOffset, (int) posY - (int) GameState.yOffset);
+    public void update(Block[][] blocks) {
+        if(this.id == 0) {
+            this.doesExist = false;
+            this.collisionBox.setLocation(0,0);
+        } else {
+            this.doesExist = true;
+            this.collisionBox.setLocation((int) posX - (int) GameState.xOffset, (int) posY - (int) GameState.yOffset);
+        }
     }
 
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.GRAY);
-        g.fillRect((int)posX - (int)GameState.xOffset, (int)posY - (int)GameState.yOffset, BLOCK_SIZE, BLOCK_SIZE);
+        if(this.doesExist) {
+            g.fillRect((int) posX - (int) GameState.xOffset, (int) posY - (int) GameState.yOffset, BLOCK_SIZE, BLOCK_SIZE);
+        }
     }
 
 

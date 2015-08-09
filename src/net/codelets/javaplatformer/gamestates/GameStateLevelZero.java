@@ -2,6 +2,7 @@ package net.codelets.javaplatformer.gamestates;
 
 import net.codelets.javaplatformer.GamePanel;
 import net.codelets.javaplatformer.entities.Player;
+import net.codelets.javaplatformer.mapping.Map;
 import net.codelets.javaplatformer.objects.Block;
 
 import java.awt.*;
@@ -11,8 +12,9 @@ import java.awt.*;
  */
 public class GameStateLevelZero extends GameState {
     // Properties
-    Player player;
-    Block[] blocks;
+    private Player player;
+    private Block[][] blocks;
+    private Map map;
     // Constructor
     public GameStateLevelZero(GameStateManager gsm) {
         super(gsm);
@@ -21,28 +23,21 @@ public class GameStateLevelZero extends GameState {
     // Methods
     @Override
     public void init() {
-        blocks = new Block[14];
+        map = new Map("res/level0.map");
+        blocks = map.getBlocks();
         player = new Player(GamePanel.WIDTH/2, GamePanel.HEIGHT - 150);
-
-        for (int i = 0; i < blocks.length; i++) {
-            blocks[i] = new Block(GamePanel.WIDTH/4 + i*(Block.BLOCK_SIZE + 1), GamePanel.HEIGHT - 100 + Block.BLOCK_SIZE*i ) ;
-        }
     }
 
     @Override
     public void update(){
         player.update(blocks);
-        for(int i = 0; i < blocks.length; i++) {
-            blocks[i].update(blocks);
-        }
+        map.update();
     }
 
     @Override
     public void draw(Graphics g) {
         player.draw(g);
-        for (int i = 0; i < blocks.length; i++) {
-            blocks[i].draw(g);
-        }
+        map.draw(g);
     }
 
     @Override

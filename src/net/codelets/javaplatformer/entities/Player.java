@@ -17,6 +17,7 @@ public class Player extends Entity {
     // Constructors
     public Player(int posX, int posY) {
         super(posX, posY);
+        this.speed = 2.5;
         this.collisionBox = new Rectangle(posX, posY, 32, 32);
     }
 
@@ -35,10 +36,11 @@ public class Player extends Entity {
     }
 
     @Override
-    public void update(Block[] blocks) {
+    public void update(Block[][] blocks) {
         collision(blocks);
         movement();
         botCollision = false;
+        System.out.println(jumping);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class Player extends Entity {
                 this.moveRight = true;
                 break;
             case KeyEvent.VK_SPACE:
-                this.jumping = true;
+                if(!falling) this.jumping = true;
                 break;
         }
     }
@@ -93,7 +95,6 @@ public class Player extends Entity {
             if(currentJumpSpeed <= 0) {
                 falling = true;
                 jumping = false;
-                currentJumpSpeed = 5;
             }
         }
         if(falling) {
@@ -102,20 +103,23 @@ public class Player extends Entity {
         }
     }
 
-    private void collision(Block[] blocks) {
+    private void collision(Block[][] blocks) {
         for(int i = 0; i < blocks.length; i++) {
-            if(Collision.topCollision(this, blocks[i])) currentJumpSpeed = 0;
-            if(Collision.leftCollision(this, blocks[i]))  moveLeft = false;
-            if(Collision.rightCollision(this, blocks[i])) moveRight = false;
-            if(Collision.botCollision(this, blocks[i])) {
-                falling = false;
-                botCollision = true;
-                currentFallSpeed = 0.1;
-                // avoid sinking
-                if(Collision.isColliding(this, blocks[i])) GameState.yOffset--;
-            } else {
-                if(!jumping && !botCollision) {
-                    falling = true;
+            for(int j = 0; j < blocks[i].length; j++) {
+                if (Collision.topCollision(this, blocks[i][j])) currentJumpSpeed = 0;
+                if (Collision.leftCollision(this, blocks[i][j])) moveLeft = false;
+                if (Collision.rightCollision(this, blocks[i][j])) moveRight = false;
+                if (Collision.botCollision(this, blocks[i][j])) {
+                    falling = false;
+                    botCollision = true;
+                    currentFallSpeed = 0.1;
+                    currentJumpSpeed = 5;
+                    // avoid sinking
+                    if (Collision.isColliding(this, blocks[i][j])) GameState.yOffset--;
+                } else {
+                    if (!jumping && !botCollision) {
+                        falling = true;
+                    }
                 }
             }
         }
