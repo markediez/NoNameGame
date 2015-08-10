@@ -1,6 +1,8 @@
 package net.codelets.javaplatformer.entities;
 
 import net.codelets.javaplatformer.gamestates.GameState;
+import net.codelets.javaplatformer.gui.InventoryGUI;
+import net.codelets.javaplatformer.gui.StatusGUI;
 import net.codelets.javaplatformer.objects.Block;
 import net.codelets.javaplatformer.physics.Collision;
 
@@ -14,16 +16,21 @@ public class Player extends Entity {
     // Properties
     private boolean moveLeft, moveRight, falling, jumping, botCollision;
     private double jumpSpeed, fallSpeed, currentJumpSpeed, currentFallSpeed;
+    // GUI
+    private StatusGUI statusGUI;
+    private InventoryGUI inventoryGUI;
+
+    //
+    private int health;
     // Constructors
     public Player(int posX, int posY) {
         super(posX, posY);
-        this.speed = 2.5;
-        this.collisionBox = new Rectangle(posX, posY, 32, 32);
     }
 
     // Methods
     @Override
     public void init() {
+        this.collisionBox = new Rectangle((int)posX, (int)posY, 32, 32);
         this.moveLeft = false;
         this.moveRight = false;
         this.falling = false;
@@ -31,8 +38,12 @@ public class Player extends Entity {
         this.botCollision = false;
         this.jumpSpeed = 5;
         this.fallSpeed = 0.1;
+        this.health = 100;
+        this.speed = 2;
         this.currentFallSpeed = this.fallSpeed;
         this.currentJumpSpeed = this.jumpSpeed;
+        this.statusGUI = new StatusGUI(this);
+        this.inventoryGUI = new InventoryGUI(this);
     }
 
     @Override
@@ -40,13 +51,16 @@ public class Player extends Entity {
         collision(blocks);
         movement();
         botCollision = false;
-        System.out.println(jumping);
+        statusGUI.update();
+
     }
 
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.red);
         g.fillRect((int)posX, (int)posY, 32, 32);
+        statusGUI.draw(g);
+        inventoryGUI.draw(g);
     }
 
     public void keyPressed(int key) {
@@ -65,6 +79,9 @@ public class Player extends Entity {
                 break;
             case KeyEvent.VK_SPACE:
                 if(!falling) this.jumping = true;
+                break;
+            case KeyEvent.VK_I:
+                inventoryGUI.keyPressed(key);
                 break;
         }
     }
@@ -124,4 +141,7 @@ public class Player extends Entity {
             }
         }
     }
+
+    // Getters & Setters
+    public int getHealth() {return this.health;}
 }

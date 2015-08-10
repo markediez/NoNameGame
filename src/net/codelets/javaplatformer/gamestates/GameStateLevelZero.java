@@ -36,8 +36,8 @@ public class GameStateLevelZero extends GameState {
 
     @Override
     public void draw(Graphics g) {
-        player.draw(g);
         map.draw(g);
+        player.draw(g);
     }
 
     @Override
