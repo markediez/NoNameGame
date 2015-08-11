@@ -3,6 +3,10 @@ package net.codelets.javaplatformer.entities;
 import net.codelets.javaplatformer.gamestates.GameState;
 import net.codelets.javaplatformer.gui.InventoryGUI;
 import net.codelets.javaplatformer.gui.StatusGUI;
+import net.codelets.javaplatformer.items.Bag;
+import net.codelets.javaplatformer.items.Item;
+import net.codelets.javaplatformer.items.Potion;
+import net.codelets.javaplatformer.items.Weapon;
 import net.codelets.javaplatformer.objects.Block;
 import net.codelets.javaplatformer.physics.Collision;
 
@@ -22,6 +26,7 @@ public class Player extends Entity {
 
     //
     private int health;
+    private Bag inventory;
     // Constructors
     public Player(int posX, int posY) {
         super(posX, posY);
@@ -39,9 +44,15 @@ public class Player extends Entity {
         this.jumpSpeed = 5;
         this.fallSpeed = 0.1;
         this.health = 100;
-        this.speed = 2;
+        this.speed = 2.5;
         this.currentFallSpeed = this.fallSpeed;
         this.currentJumpSpeed = this.jumpSpeed;
+        this.inventory = new Bag();
+
+        inventory.add(new Potion());
+        inventory.add(new Weapon());
+        inventory.add(new Potion());
+        inventory.add(new Weapon());
         this.statusGUI = new StatusGUI(this);
         this.inventoryGUI = new InventoryGUI(this);
     }
@@ -58,7 +69,7 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.red);
-        g.fillRect((int)posX, (int)posY, 32, 32);
+        g.fillRect((int) posX, (int) posY, 32, 32);
         statusGUI.draw(g);
         inventoryGUI.draw(g);
     }
@@ -81,6 +92,15 @@ public class Player extends Entity {
                 if(!falling) this.jumping = true;
                 break;
             case KeyEvent.VK_I:
+                inventoryGUI.keyPressed(key);
+                break;
+            case KeyEvent.VK_DOWN:
+                inventoryGUI.keyPressed(key);
+                break;
+            case KeyEvent.VK_UP:
+                inventoryGUI.keyPressed(key);
+                break;
+            case KeyEvent.VK_ENTER:
                 inventoryGUI.keyPressed(key);
                 break;
         }
@@ -123,9 +143,18 @@ public class Player extends Entity {
     private void collision(Block[][] blocks) {
         for(int i = 0; i < blocks.length; i++) {
             for(int j = 0; j < blocks[i].length; j++) {
-                if (Collision.topCollision(this, blocks[i][j])) currentJumpSpeed = 0;
-                if (Collision.leftCollision(this, blocks[i][j])) moveLeft = false;
-                if (Collision.rightCollision(this, blocks[i][j])) moveRight = false;
+                if (Collision.topCollision(this, blocks[i][j])) {
+                    currentJumpSpeed = 0;
+                    if(Collision.isColliding(this, blocks[i][j])) GameState.yOffset++;
+                }
+                if (Collision.leftCollision(this, blocks[i][j])) {
+                    moveLeft = false;
+                    if(Collision.isColliding(this, blocks[i][j])) GameState.xOffset++;
+                }
+                if (Collision.rightCollision(this, blocks[i][j])) {
+                    moveRight = false;
+                    if(Collision.isColliding(this, blocks[i][j])) GameState.xOffset--;
+                }
                 if (Collision.botCollision(this, blocks[i][j])) {
                     falling = false;
                     botCollision = true;
@@ -142,6 +171,12 @@ public class Player extends Entity {
         }
     }
 
+    public void use(Item item) {
+        if(item instanceof Potion) {
+            this.health += ((Potion) item).getValue();
+        }
+    }
     // Getters & Setters
-    public int getHealth() {return this.health;}
+    public int getHealth() { return this.health; }
+    public Bag getInventory() { return this.inventory; }
 }
